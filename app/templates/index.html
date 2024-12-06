@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Pricing Engine</title>
+</head>
+<body>
+    <div id="root"></div>
+    <script src="https://unpkg.com/react/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script>
+        const { useState, useEffect } = React;
+
+        function App() {
+            const [prices, setPrices] = useState([]);
+
+            useEffect(() => {
+                axios.get('/get_prices')
+                    .then(response => {
+                        setPrices(response.data.adjusted_prices);
+                    })
+                    .catch(error => {
+                        console.error('There was an error fetching the prices!', error);
+                    });
+            }, []);
+
+            return (
+                <div>
+                    <h1>Dynamic Pricing Engine</h1>
+                    <ul>
+                        {prices.map((price, index) => (
+                            <li key={index}>Price: ${price.toFixed(2)}</li>
+                        ))}
+                    </ul>
+                </div>
+            );
+        }
+
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>
